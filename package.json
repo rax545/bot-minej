@@ -1,0 +1,25 @@
+{
+  "name": "ultimatemusic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "console": "^0.7.2",
+    "crypto": "^1.0.1",
+    "discord.js": "^14.22.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.17.2",
+    "path": "^0.12.7",
+    "process": "^0.11.10",
+    "riffy": "^1.0.7"
+  }
+}
