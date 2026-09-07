@@ -194,7 +194,7 @@ class CentralEmbedHandler {
                     ].join('\n'))
                     .setColor(embedColor)
                     .setFooter({ 
-                        text: `Ultimate Music Bot • ${statusText} • Developed By GlaceYT`,
+                        text: `WWG Music Bot • ${statusText} • Developed By JOY`,
                         iconURL: this.client.user.displayAvatarURL()
                     })
                     .setTimestamp();
