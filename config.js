@@ -33,7 +33,7 @@ class EnterpriseConfigurationManager {
                 host: EnvironmentVariableProcessor.LAVALINK_HOST || "ishaan.hidencloud.com",
                 port: EnvironmentVariableProcessor.LAVALINK_PORT || 24611,    
                 password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "D-Radio",
-                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
+                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || false
             },
             
             /**
