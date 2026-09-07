@@ -30,9 +30,9 @@ class EnterpriseConfigurationManager {
              * Configure your Lavalink server for audio processing
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST || "89.106.84.47"
-                port: EnvironmentVariableProcessor.LAVALINK_PORT || "2555"     
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "https://discord.gg/archost"
+                host: EnvironmentVariableProcessor.LAVALINK_HOST || "ishaan.hidencloud.com",
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24611,    
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "D-Radio",
                 secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
             },
             
