@@ -25,9 +25,9 @@ module.exports = {
                 .setColor(0x1DB954)
                 .setDescription(
                     'Need help or have questions? Join our official support server:\n' +
-                    '[Support Server](https://discord.gg/VKSUyhGr6q)\n\n' +
-                    'For direct inquiries, contact: **GlaceYT**\n\n' +
-                    'Website: https://glaceyt.com'
+                    '[Support Server](https://discord.gg/dfUaMZ7VXd)\n\n' +
+                    'For direct inquiries, contact: **JOY**\n\n' +
+                    'Website: https://glaceyt.co'
                 )
                 .setTimestamp()
                 .setFooter({ text: 'TSL 71 Music Bot • Developed by Joy' });
