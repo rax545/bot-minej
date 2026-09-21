@@ -91,7 +91,10 @@ class DiscordClientRuntimeManager {
                     }
                 },
                 defaultSearchPlatform: "ytmsearch",
-                restVersion: "v4"
+                restVersion: "v4",
+                reconnectTries: 10,
+                reconnectTimeout: 10000,
+                autoResume: true
             }
         );
         

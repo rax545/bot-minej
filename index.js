@@ -3,7 +3,7 @@ require('./shiva');
 const path = require('path');
 const express = require("express");
 const app = express();
-const port = 8888;
+const port = process.env.PORT || 8888;
 app.get('/', (req, res) => {
     const imagePath = path.join(__dirname, 'index.html');
     res.sendFile(imagePath);

@@ -68,6 +68,16 @@ module.exports = {
                 return message.reply({ embeds: [embed] });
             }
 
+            const voiceJoined = await playerHandler.waitForVoiceJoin(
+                message.guild.id,
+                targetVC
+            );
+            if (!voiceJoined) {
+                try { player.destroy(); } catch (destroyError) {}
+                const embed = new EmbedBuilder().setDescription(PlayerHandler.getJoinFailedMessage());
+                return message.reply({ embeds: [embed] });
+            }
+
             const result = await playerHandler.playSong(player, query, message.author);
 
             if (result.type === 'track') {

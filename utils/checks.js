@@ -9,7 +9,8 @@ class ConditionChecker {
     async checkMusicConditions(guildId, userId, voiceChannelId, fromCentral = false) {
         const player = this.client.riffy.players.get(guildId);
         const guild = this.client.guilds.cache.get(guildId);
-        const member = guild?.members.cache.get(userId);
+        const member = guild?.members.cache.get(userId) ||
+            (guild ? await guild.members.fetch(userId).catch(() => null) : null);
         const serverConfig = await Server.findById(guildId);
 
 

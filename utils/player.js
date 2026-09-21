@@ -16,6 +16,32 @@ class PlayerHandler {
         return !!(this.client.riffy && this.client.riffy.initiated && this.client.riffy.leastUsedNodes.length > 0);
     }
 
+    /**
+     * Wait until the bot ACTUALLY appears in the voice channel (Discord confirmed).
+     * Returns true on real join, false on timeout (e.g. missing Connect/Speak perms).
+     */
+    async waitForVoiceJoin(guildId, voiceChannelId, timeoutMs = 6000) {
+        const guild = this.client.guilds.cache.get(guildId);
+        if (!guild) return false;
+        const deadline = Date.now() + timeoutMs;
+
+        const botInChannel = () => {
+            const me = guild.members.me || guild.members.cache.get(this.client.user?.id);
+            return me?.voice?.channelId === voiceChannelId;
+        };
+
+        while (Date.now() < deadline) {
+            if (botInChannel()) return true;
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        return botInChannel();
+    }
+
+    static getJoinFailedMessage() {
+        return '❌ I tried to join the voice channel but **Discord refused**.\n' +
+               'Check my **Connect** & **Speak** permissions, make sure the channel is not private/locked for my role, and it is not full.';
+    }
+
     async createPlayer(guildId, voiceChannelId, textChannelId, options = {}) {
         try {
             if (!this.isLavalinkReady()) {

@@ -60,6 +60,16 @@ module.exports = {
                 return interaction.editReply({ embeds: [embed] });
             }
 
+            const voiceJoined = await playerHandler.waitForVoiceJoin(
+                interaction.guild.id,
+                interaction.member.voice.channelId
+            );
+            if (!voiceJoined) {
+                try { player.destroy(); } catch (destroyError) {}
+                const embed = new EmbedBuilder().setDescription(PlayerHandler.getJoinFailedMessage());
+                return interaction.editReply({ embeds: [embed] });
+            }
+
             const result = await playerHandler.playSong(player, query, interaction.user);
 
             if (result.type === 'track') {

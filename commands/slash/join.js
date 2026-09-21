@@ -38,6 +38,12 @@ module.exports = {
                     .then(() => setTimeout(() => interaction.deleteReply().catch(() => {}), 3000));
             }
 
+            if (!conditions.canJoinVoice) {
+                const embed = new EmbedBuilder().setDescription('❌ I don\'t have permission to join your voice channel!');
+                return interaction.editReply({ embeds: [embed] })
+                    .then(() => setTimeout(() => interaction.deleteReply().catch(() => {}), 3000));
+            }
+
             if (conditions.hasActivePlayer && conditions.sameVoiceChannel) {
                 const embed = new EmbedBuilder().setDescription('✅ I\'m already in your voice channel!');
                 return interaction.editReply({ embeds: [embed] })
@@ -55,6 +61,16 @@ module.exports = {
 
             if (!player) {
                 const embed = new EmbedBuilder().setDescription(PlayerHandler.getLavalinkOfflineMessage());
+                return interaction.editReply({ embeds: [embed] });
+            }
+
+            const voiceJoined = await playerHandler.waitForVoiceJoin(
+                interaction.guild.id,
+                interaction.member.voice.channelId
+            );
+            if (!voiceJoined) {
+                try { player.destroy(); } catch (destroyError) {}
+                const embed = new EmbedBuilder().setDescription(PlayerHandler.getJoinFailedMessage());
                 return interaction.editReply({ embeds: [embed] });
             }
 
