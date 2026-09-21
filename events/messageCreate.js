@@ -255,8 +255,8 @@ async function handleCentralMessage(message, client, serverConfig) {
                 return;
             }
 
-            await handleCentralSongRequest(message, client, serverConfig, voiceValidation.voiceChannelId);
-            await message.react('✅').catch(() => { });
+            const songRequestAccepted = await handleCentralSongRequest(message, client, serverConfig, voiceValidation.voiceChannelId);
+            await message.react(songRequestAccepted ? '✅' : '❌').catch(() => { });
             setTimeout(() => safeDeleteMessage(message), 3000);
         } else {
             safeDeleteMessage(message);
@@ -1250,10 +1250,22 @@ async function handleCentralSongRequest(message, client, serverConfig, validated
         }
 
         const player = await playerHandler.createPlayer(message.guild.id, voiceChannelId, message.channel.id);
+        if (!player) {
+            console.error('Central song request failed: no Lavalink node connected');
+            return false;
+        }
+        const voiceJoined = await playerHandler.waitForVoiceJoin(message.guild.id, voiceChannelId);
+        if (!voiceJoined) {
+            try { player.destroy(); } catch (destroyError) {}
+            console.error('Central song request failed: bot did not join the voice channel');
+            return false;
+        }
         const result = await playerHandler.playSong(player, message.content.trim(), message.author);
+        return !!result && result.type !== 'error';
     } catch (error) {
         console.error('Error in central song request:', error);
         message.react('❌').catch(() => { });
+        return false;
     }
 }
 

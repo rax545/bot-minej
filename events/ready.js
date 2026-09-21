@@ -98,7 +98,18 @@ class ClientInitializationManager {
         try {
             this.clientRuntimeInstance.riffy.init(this.clientRuntimeInstance.user.id);
             this.initializationStatus.audioSystemReady = true;
-            
+
+            // Verify Lavalink connectivity shortly after startup (nodes connect async)
+            setTimeout(() => {
+                const connectedNodes = this.clientRuntimeInstance.riffy?.leastUsedNodes?.length || 0;
+                if (connectedNodes === 0) {
+                    console.warn('⚠️ WARNING: No Lavalink node is connected! Music and join commands will NOT work.');
+                    console.warn('👉 Fix: set LAVALINK_HOST / LAVALINK_PORT / LAVALINK_PASSWORD / LAVALINK_SECURE in .env (see .env.example) and restart.');
+                } else {
+                    console.log(`🎵 ${connectedNodes} Lavalink node(s) connected - music ready`);
+                }
+            }, 10000);
+
         } catch (audioInitializationException) {
             console.error('❌ Audio system initialization failed:', audioInitializationException);
             throw audioInitializationException;

@@ -42,10 +42,13 @@
 
 <h3>How to Install</h3>
 
-<h4>Step 1: Update <code>config.json</code> [ USE ENV FILES ]</h4>
+<h4>Step 1: Create your <code>.env</code> file [ COPY FROM <code>.env.example</code> ]</h4>
 
 <ol>
-  <li>Open the <code>config.json</code> and add your MongoDB URL.</li>
+  <li>Copy <code>.env.example</code> to <code>.env</code> and fill in your values.</li>
+  <li><b>Required:</b> <code>TOKEN</code> (Discord bot token) and <code>MONGODB_URI</code> (MongoDB connection string).</li>
+  <li><b>Music (important!):</b> a music bot needs a <b>Lavalink</b> audio server. Set <code>LAVALINK_HOST</code>, <code>LAVALINK_PORT</code>, <code>LAVALINK_PASSWORD</code> and <code>LAVALINK_SECURE</code> in <code>.env</code>.
+  If you skip this, the bot will try community public Lavalink nodes (they can go down anytime — for stable music, use your own Lavalink).</li>
 </ol>
 
 <h4>ENV SETUP</h4>
@@ -53,6 +56,10 @@
 <pre>
 TOKEN=
 MONGODB_URI=
+LAVALINK_HOST=
+LAVALINK_PORT=
+LAVALINK_PASSWORD=
+LAVALINK_SECURE=false
 </pre>
 
 <h4>Step 2: Set Up Hosting Service</h4>

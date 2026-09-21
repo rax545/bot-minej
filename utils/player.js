@@ -6,8 +6,49 @@ class PlayerHandler {
         this.centralEmbed = new CentralEmbedHandler(client);
     }
 
+    static getLavalinkOfflineMessage() {
+        return '🔴 **Music server (Lavalink) is offline or unreachable!**\n' +
+               'Music cannot play and I cannot join voice channels until it is connected.\n' +
+               'Bot owner: set `LAVALINK_HOST`, `LAVALINK_PORT`, `LAVALINK_PASSWORD` (and `LAVALINK_SECURE`) in `.env`, then restart the bot. See `.env.example`.';
+    }
+
+    isLavalinkReady() {
+        return !!(this.client.riffy && this.client.riffy.initiated && this.client.riffy.leastUsedNodes.length > 0);
+    }
+
+    /**
+     * Wait until the bot ACTUALLY appears in the voice channel (Discord confirmed).
+     * Returns true on real join, false on timeout (e.g. missing Connect/Speak perms).
+     */
+    async waitForVoiceJoin(guildId, voiceChannelId, timeoutMs = 6000) {
+        const guild = this.client.guilds.cache.get(guildId);
+        if (!guild) return false;
+        const deadline = Date.now() + timeoutMs;
+
+        const botInChannel = () => {
+            const me = guild.members.me || guild.members.cache.get(this.client.user?.id);
+            return me?.voice?.channelId === voiceChannelId;
+        };
+
+        while (Date.now() < deadline) {
+            if (botInChannel()) return true;
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        return botInChannel();
+    }
+
+    static getJoinFailedMessage() {
+        return '❌ I tried to join the voice channel but **Discord refused**.\n' +
+               'Check my **Connect** & **Speak** permissions, make sure the channel is not private/locked for my role, and it is not full.';
+    }
+
     async createPlayer(guildId, voiceChannelId, textChannelId, options = {}) {
         try {
+            if (!this.isLavalinkReady()) {
+                console.error('Player creation skipped: no Lavalink node is connected');
+                return null;
+            }
+
             let player = this.client.riffy.players.get(guildId);
             
             if (player) {
@@ -36,7 +77,7 @@ class PlayerHandler {
 
     async playSong(player, query, requester) {
         try {
-            if (!player) return { type: 'error', message: 'Player not available' };
+            if (!player) return { type: 'error', code: 'lavalink_offline', message: PlayerHandler.getLavalinkOfflineMessage() };
 
             const resolve = await this.client.riffy.resolve({ 
                 query: query, 
@@ -66,7 +107,7 @@ class PlayerHandler {
             } else if (loadType === 'search' || loadType === 'track') {
                 const track = tracks[0];
                 if (!track || !track.info) {
-                    return { type: 'error', message: 'No results found' };
+                    return { type: 'error', code: 'no_results', message: 'No results found' };
                 }
 
                 track.info.requester = requester;
@@ -82,12 +123,18 @@ class PlayerHandler {
                 };
 
             } else {
-                return { type: 'error', message: 'No results found' };
+                const failureMessage = resolve?.exception?.message
+                    ? `Failed to load track: ${resolve.exception.message}`
+                    : 'No results found';
+                return { type: 'error', code: 'no_results', message: failureMessage };
             }
 
         } catch (error) {
             console.error('Play song error:', error.message);
-            return { type: 'error', message: 'Failed to play song' };
+            if (/no nodes are available/i.test(error.message || '')) {
+                return { type: 'error', code: 'lavalink_offline', message: PlayerHandler.getLavalinkOfflineMessage() };
+            }
+            return { type: 'error', code: 'load_failed', message: `Failed to play song: ${error.message}` };
         }
     }
 

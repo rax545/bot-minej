@@ -91,7 +91,10 @@ class DiscordClientRuntimeManager {
                     }
                 },
                 defaultSearchPlatform: "ytmsearch",
-                restVersion: "v4"
+                restVersion: "v4",
+                reconnectTries: 10,
+                reconnectTimeout: 10000,
+                autoResume: true
             }
         );
         
@@ -104,15 +107,34 @@ class DiscordClientRuntimeManager {
      */
     constructAudioNodeConfiguration() {
         const systemConfiguration = SystemConfigurationManager;
-        
-        return [
-            {
-                host: systemConfiguration.lavalink.host,
-                password: systemConfiguration.lavalink.password,
-                port: systemConfiguration.lavalink.port,
-                secure: systemConfiguration.lavalink.secure
-            }
-        ];
+        const liveEnvironment = process.env;
+
+        // Re-read env at call time so .env / hosting env values are always honored
+        const configuredHost = liveEnvironment.LAVALINK_HOST || systemConfiguration.lavalink.host;
+        const configuredPassword = liveEnvironment.LAVALINK_PASSWORD || systemConfiguration.lavalink.password;
+        const configuredPort = Number(liveEnvironment.LAVALINK_PORT || systemConfiguration.lavalink.port) || 2333;
+        const configuredSecure = liveEnvironment.LAVALINK_SECURE !== undefined
+            ? liveEnvironment.LAVALINK_SECURE === 'true'
+            : systemConfiguration.lavalink.secure;
+
+        if (configuredHost) {
+            console.log(`🎵 Using configured Lavalink node: ${configuredHost}:${configuredPort} (secure: ${configuredSecure})`);
+            return [{
+                name: 'configured',
+                host: configuredHost,
+                port: configuredPort,
+                password: configuredPassword,
+                secure: configuredSecure
+            }];
+        }
+
+        const fallbackNodes = systemConfiguration.lavalink.publicFallbackNodes || [];
+        console.warn('⚠️ LAVALINK_HOST is not set - using community public Lavalink fallback nodes.');
+        console.warn('👉 For stable music, host your own Lavalink and set LAVALINK_HOST / LAVALINK_PORT / LAVALINK_PASSWORD / LAVALINK_SECURE (see .env.example)');
+        for (const node of fallbackNodes) {
+            console.log(`🎵 Lavalink fallback node: ${node.name} (${node.host}:${node.port})`);
+        }
+        return fallbackNodes;
     }
     
     /**
