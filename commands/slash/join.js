@@ -47,11 +47,16 @@ module.exports = {
             const PlayerHandler = require('../../utils/player');
             const playerHandler = new PlayerHandler(client);
 
-            await playerHandler.createPlayer(
+            const player = await playerHandler.createPlayer(
                 interaction.guild.id,
                 interaction.member.voice.channelId,
                 interaction.channel.id
             );
+
+            if (!player) {
+                const embed = new EmbedBuilder().setDescription(PlayerHandler.getLavalinkOfflineMessage());
+                return interaction.editReply({ embeds: [embed] });
+            }
 
             const embed = new EmbedBuilder().setDescription(`✅ Joined **${interaction.member.voice.channel.name}**!`);
             return interaction.editReply({ embeds: [embed] })

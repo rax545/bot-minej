@@ -63,6 +63,11 @@ module.exports = {
                 message.channel.id
             );
 
+            if (!player) {
+                const embed = new EmbedBuilder().setDescription(PlayerHandler.getLavalinkOfflineMessage());
+                return message.reply({ embeds: [embed] });
+            }
+
             const result = await playerHandler.playSong(player, query, message.author);
 
             if (result.type === 'track') {
@@ -74,9 +79,9 @@ module.exports = {
                 return message.reply({ embeds: [embed] })
                     .then(m => setTimeout(() => m.delete().catch(() => {}), 3000));
             } else {
-                const embed = new EmbedBuilder().setDescription('❌ No results found for your query!');
+                const embed = new EmbedBuilder().setDescription(`❌ ${result.message || 'No results found for your query!'}`);
                 return message.reply({ embeds: [embed] })
-                    .then(m => setTimeout(() => m.delete().catch(() => {}), 3000));
+                    .then(m => setTimeout(() => m.delete().catch(() => {}), 5000));
             }
 
         } catch (error) {

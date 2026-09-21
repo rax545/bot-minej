@@ -6,8 +6,23 @@ class PlayerHandler {
         this.centralEmbed = new CentralEmbedHandler(client);
     }
 
+    static getLavalinkOfflineMessage() {
+        return '🔴 **Music server (Lavalink) is offline or unreachable!**\n' +
+               'Music cannot play and I cannot join voice channels until it is connected.\n' +
+               'Bot owner: set `LAVALINK_HOST`, `LAVALINK_PORT`, `LAVALINK_PASSWORD` (and `LAVALINK_SECURE`) in `.env`, then restart the bot. See `.env.example`.';
+    }
+
+    isLavalinkReady() {
+        return !!(this.client.riffy && this.client.riffy.initiated && this.client.riffy.leastUsedNodes.length > 0);
+    }
+
     async createPlayer(guildId, voiceChannelId, textChannelId, options = {}) {
         try {
+            if (!this.isLavalinkReady()) {
+                console.error('Player creation skipped: no Lavalink node is connected');
+                return null;
+            }
+
             let player = this.client.riffy.players.get(guildId);
             
             if (player) {
@@ -36,7 +51,7 @@ class PlayerHandler {
 
     async playSong(player, query, requester) {
         try {
-            if (!player) return { type: 'error', message: 'Player not available' };
+            if (!player) return { type: 'error', code: 'lavalink_offline', message: PlayerHandler.getLavalinkOfflineMessage() };
 
             const resolve = await this.client.riffy.resolve({ 
                 query: query, 
@@ -66,7 +81,7 @@ class PlayerHandler {
             } else if (loadType === 'search' || loadType === 'track') {
                 const track = tracks[0];
                 if (!track || !track.info) {
-                    return { type: 'error', message: 'No results found' };
+                    return { type: 'error', code: 'no_results', message: 'No results found' };
                 }
 
                 track.info.requester = requester;
@@ -82,12 +97,18 @@ class PlayerHandler {
                 };
 
             } else {
-                return { type: 'error', message: 'No results found' };
+                const failureMessage = resolve?.exception?.message
+                    ? `Failed to load track: ${resolve.exception.message}`
+                    : 'No results found';
+                return { type: 'error', code: 'no_results', message: failureMessage };
             }
 
         } catch (error) {
             console.error('Play song error:', error.message);
-            return { type: 'error', message: 'Failed to play song' };
+            if (/no nodes are available/i.test(error.message || '')) {
+                return { type: 'error', code: 'lavalink_offline', message: PlayerHandler.getLavalinkOfflineMessage() };
+            }
+            return { type: 'error', code: 'load_failed', message: `Failed to play song: ${error.message}` };
         }
     }
 
