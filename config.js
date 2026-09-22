@@ -36,7 +36,7 @@ class EnterpriseConfigurationManager {
                 host: EnvironmentVariableProcessor.LAVALINK_HOST || "lavalink.nazha.online",
                 port: EnvironmentVariableProcessor.LAVALINK_PORT || 443,    
                 password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "nazhafreelava",
-                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || false
+                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
 
                 /**
                  * Community public Lavalink nodes - used ONLY when LAVALINK_HOST is not set.
