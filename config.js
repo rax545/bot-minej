@@ -33,10 +33,10 @@ class EnterpriseConfigurationManager {
              * If LAVALINK_HOST is not set, the public fallback nodes below are used.
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST || "",
-                port: Number(EnvironmentVariableProcessor.LAVALINK_PORT) || 2333,
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "",
-                secure: (EnvironmentVariableProcessor.LAVALINK_SECURE || 'false') === 'true',
+                host: EnvironmentVariableProcessor.LAVALINK_HOST || "ishaan.hidencloud.com",
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24611,    
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "D-Radio",
+                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || false
 
                 /**
                  * Community public Lavalink nodes - used ONLY when LAVALINK_HOST is not set.
