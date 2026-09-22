@@ -33,7 +33,7 @@ class EnterpriseConfigurationManager {
                 host: EnvironmentVariableProcessor.LAVALINK_HOST ||  paloma.hidencloud.com 
                 port: EnvironmentVariableProcessor.LAVALINK_PORT || 24672      
                 password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||  https://discord.gg/J3kdqKcKC5 
-                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
+                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || flase
             },
             
             /**
