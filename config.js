@@ -33,9 +33,9 @@ class EnterpriseConfigurationManager {
              * If LAVALINK_HOST is not set, the public fallback nodes below are used.
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST || "ishaan.hidencloud.com",
-                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24611,    
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "D-Radio",
+                host: EnvironmentVariableProcessor.LAVALINK_HOST || "89.106.84.47",
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 2555,    
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "https://discord.gg/archost",
                 secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || false
 
                 /**
