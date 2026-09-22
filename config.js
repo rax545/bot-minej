@@ -30,9 +30,9 @@ class EnterpriseConfigurationManager {
              * Configure your Lavalink server for audio processing
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST ||  paloma.hidencloud.com 
-                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24672      
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||  https://discord.gg/J3kdqKcKC5 
+                host: EnvironmentVariableProcessor.LAVALINK_HOST ||  "de-01.strixnodes.com",
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 2010,    
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||  "glace",
                 secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || flase
             },
             
