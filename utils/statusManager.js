@@ -1,4 +1,5 @@
 const { ActivityType } = require('discord.js');
+const config = require('../config');
 
 class StatusManager {
     constructor(client) {
@@ -12,9 +13,9 @@ class StatusManager {
     async updateStatusAndVoice(guildId) {
         try {
     
-            const playerInfo = this.client.playerHandler.getPlayerInfo(guildId);
-            
-            if (playerInfo && playerInfo.playing) {
+            const playerInfo = await this.client.playerHandler.getPlayerInfo(guildId);
+
+            if (playerInfo && (playerInfo.playing || playerInfo.paused)) {
          
                 await this.setPlayingStatus(playerInfo.title);
                 await this.setVoiceChannelStatus(guildId, playerInfo.title);
@@ -32,9 +33,8 @@ class StatusManager {
     async setPlayingStatus(trackTitle) {
         this.stopCurrentStatus();
         this.isPlaying = true;
-        
+
         const activity = `🎵 ${trackTitle}`;
-     
         await this.client.user.setPresence({
             activities: [{
                 name: activity,
@@ -42,21 +42,9 @@ class StatusManager {
             }],
             status: 'online'
         });
-        
-    
-        this.currentInterval = setInterval(async () => {
-            if (this.isPlaying) {
-                await this.client.user.setPresence({
-                    activities: [{
-                        name: activity,
-                        type: ActivityType.Listening
-                    }],
-                    status: 'online'
-                });
-                console.log(`🔄 Status refreshed: ${activity}`);
-            }
-        }, 30000);
-        
+
+        // A playing track owns the presence. The idle RPC timer stays paused until
+        // setDefaultStatus/setServerCountStatus is called when playback stops.
         console.log(`✅ Status locked to: ${activity}`);
     }
 
@@ -266,24 +254,38 @@ class StatusManager {
     }
 
 
-    async setDefaultStatus() {
-        this.stopCurrentStatus();
-        this.isPlaying = false;
-        
-        const defaultActivity = `🎵 Ready for music!`;
-        
-        await this.client.user.setPresence({
-            activities: [{
-                name: defaultActivity,
-                type: ActivityType.Watching
-            }],
-            status: 'online'
-        });
-        
-        console.log(`✅ Status reset to: ${defaultActivity}`);
+    getRpcStatuses() {
+        const configuredStatuses = Array.isArray(config.rpc?.statuses)
+            ? config.rpc.statuses.filter(status => typeof status === 'string' && status.trim())
+            : [];
+        return configuredStatuses.length > 0 ? configuredStatuses : ['🎵 Developed by JOy'];
     }
 
-  
+    getRpcInterval() {
+        const configuredInterval = Number(config.rpc?.intervalMs);
+        return Math.max(5000, Number.isFinite(configuredInterval) && configuredInterval > 0
+            ? configuredInterval
+            : 20000);
+    }
+
+    formatRpcStatus(status) {
+        return status.replace(/\{servers\}/g, String(this.client.guilds.cache.size));
+    }
+
+    async setRpcPresence(statusName) {
+        const name = this.formatRpcStatus(statusName);
+        await this.client.user.setPresence({
+            activities: [{ name, type: ActivityType.Watching }],
+            status: 'online'
+        });
+        console.log(`🪪 RPC set: ${name}`);
+    }
+
+    async setDefaultStatus() {
+        this.isPlaying = false;
+        await this.setServerCountStatus(this.client.guilds.cache.size);
+    }
+
     stopCurrentStatus() {
         if (this.currentInterval) {
             clearInterval(this.currentInterval);
@@ -291,18 +293,28 @@ class StatusManager {
         }
     }
 
- 
-    async setServerCountStatus(serverCount) {
-        if (!this.isPlaying) {
-            await this.client.user.setPresence({
-                activities: [{
-                    name: `🎸 Music in ${serverCount} servers`,
-                    type: ActivityType.Playing
-                }],
-                status: 'online'
-            });
-            //console.log(`✅ Server count status set: ${serverCount} servers`);
-        }
+    async setServerCountStatus(serverCount = this.client.guilds.cache.size) {
+        if (this.isPlaying) return;
+
+        this.stopCurrentStatus();
+        const statuses = this.getRpcStatuses();
+        let statusIndex = 0;
+        const setNextStatus = async () => {
+            if (this.isPlaying) return;
+            const statusName = statuses[statusIndex % statuses.length];
+            statusIndex++;
+            try {
+                await this.setRpcPresence(statusName);
+            } catch (error) {
+                console.error(`❌ RPC update failed: ${error.message}`);
+            }
+        };
+
+        // Keep the argument for compatibility with existing callers, but always
+        // resolve {servers} from the live guild cache.
+        void serverCount;
+        await setNextStatus();
+        this.currentInterval = setInterval(setNextStatus, this.getRpcInterval());
     }
 
 

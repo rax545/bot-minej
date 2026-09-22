@@ -156,11 +156,21 @@ class ClientInitializationManager {
                 this.clientRuntimeInstance.guilds.cache.size
             );
             this.initializationStatus.statusSystemReady = true;
-            
         } catch (statusSystemException) {
             console.error('❌ Status system initialization failed:', statusSystemException);
             // Non-critical failure - continue startup
             this.initializationStatus.statusSystemReady = false;
+        }
+
+        try {
+            const { ActivityType } = require('discord.js');
+            await this.clientRuntimeInstance.user.setPresence({
+                activities: [{ name: '🎵 Developed by JOy', type: ActivityType.Watching }],
+                status: 'online'
+            });
+            console.log('🪪 Initial RPC set: 🎵 Developed by JOy');
+        } catch (initialRpcError) {
+            console.error('❌ Initial RPC set failed', initialRpcError.message);
         }
     }
     
@@ -255,15 +265,40 @@ class SlashCommandRegistrationService {
     async executeDiscordAPIRegistration() {
         const discordRESTClient = new DiscordRESTClientManager()
             .setToken(SystemConfigurationManager.discord.token || process.env.TOKEN);
-        
+        const applicationId = this.clientRuntimeInstance.user.id;
+        const commandBody = this.discoveredCommands;
+
         console.log('🔄 Started refreshing slash commands...');
-        
+
+        // Global registration keeps commands available everywhere. Guild registration
+        // is intentionally done as well so new commands appear instantly in each guild.
         await discordRESTClient.put(
-            DiscordApplicationRoutesRegistry.applicationCommands(this.clientRuntimeInstance.user.id),
-            { body: this.discoveredCommands }
+            DiscordApplicationRoutesRegistry.applicationCommands(applicationId),
+            { body: commandBody }
         );
-        
+
+        let failedGuildRegistrations = 0;
+        const guilds = [...this.clientRuntimeInstance.guilds.cache.values()];
+        for (const guild of guilds) {
+            try {
+                await discordRESTClient.put(
+                    DiscordApplicationRoutesRegistry.applicationGuildCommands(applicationId, guild.id),
+                    { body: commandBody }
+                );
+            } catch (guildRegistrationError) {
+                failedGuildRegistrations++;
+                console.error(
+                    `❌ Command registration failed for guild "${guild.name}" (${guild.id}): ${guildRegistrationError.message}`
+                );
+            }
+        }
+
         this.registrationSuccess = true;
-        console.log('✅ Successfully registered slash commands!');
+        const failureSuffix = failedGuildRegistrations > 0
+            ? ` +${failedGuildRegistrations} failed`
+            : '';
+        console.log(
+            `✅ Slash commands registered: ${guilds.length} guild(s) instant${failureSuffix} + global`
+        );
     }
 }

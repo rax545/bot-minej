@@ -48,10 +48,26 @@ class EnterpriseConfigurationManager {
                     { name: 'nazha-sg', host: 'sg-1.nazha.online', port: 443, password: 'https://discord.gg/XeSCnk57ZF', secure: true },
                     { name: 'huntolls', host: 'lavalink-v4.huntolls-bot.xyz', port: 443, password: 'youshallnotpass', secure: true },
                     { name: 'jirayu', host: 'lavalink.jirayu.net', port: 13592, password: 'youshallnotpass', secure: false },
-                    { name: 'jompo', host: 'lavalink.jompo.cloud', port: 2333, password: 'jompo', secure: false }
+                    { name: 'jompo', host: 'lavalink.jompo.cloud', port: 2333, password: 'jompo', secure: false },
+                    { name: 'heavencloud-sg', host: 'free-lava.heavencloud.in', port: 4000, password: 'heavencloud.in', secure: false },
+                    { name: 'heavencloud-in', host: 'lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true },
+                    { name: 'heavencloud-us', host: 'us.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true },
+                    { name: 'heavencloud-eu', host: 'eu.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true },
+                    { name: 'heavencloud-singapore-v4', host: 'sg.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true }
                 ]
             },
-            
+
+            rpc: {
+                statuses: [
+                    '🎵 Developed by JOy',
+                    '🎵 /play to start the music',
+                    '🎵 /nowplaying for song details',
+                    '🎵 Serving {servers} servers',
+                    '🎵 /status for bot health'
+                ],
+                intervalMs: 20000
+            },
+
             /**
              * 🤖 BOT BEHAVIOR CONFIGURATION
              * Customize your bot's appearance and basic behavior

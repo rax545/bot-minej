@@ -257,6 +257,12 @@ class PlayerHandler {
         
                 if (player.isAutoplay) {
                     player.autoplay(player);
+                } else if (serverConfig?.settings?.twentyFourSeven) {
+                    // 24/7 servers keep their voice connection after the queue ends.
+                    if (this.client.statusManager) {
+                        await this.client.statusManager.setDefaultStatus();
+                    }
+                    console.log(`🔁 Keeping player connected for 24/7 server ${player.guildId}`);
                 } else {
                     if (this.client.statusManager) {
                         await this.client.statusManager.onPlayerDisconnect(player.guildId);
