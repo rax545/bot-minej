@@ -7,8 +7,6 @@
  * @author GlaceYT
  */
 
-// Load .env FIRST so TOKEN / MONGODB_URI / LAVALINK_* are available below
-require('dotenv').config({ quiet: true });
 const EnvironmentVariableProcessor = require('process').env;
 
 class EnterpriseConfigurationManager {
@@ -29,27 +27,13 @@ class EnterpriseConfigurationManager {
             
             /**
              * 🎵 LAVALINK AUDIO SERVER CONFIGURATION
-             * Set LAVALINK_* in .env (see .env.example) to use your own Lavalink server.
-             * If LAVALINK_HOST is not set, the public fallback nodes below are used.
+             * Configure your Lavalink server for audio processing
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST || "ishaan.hidencloud.com",
-                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24611,    
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD || "D-Radio",
-                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'true' || false
-
-                /**
-                 * Community public Lavalink nodes - used ONLY when LAVALINK_HOST is not set.
-                 * These are free public nodes and may go down anytime.
-                 * For stable music, host your own Lavalink and set LAVALINK_* in .env.
-                 */
-                publicFallbackNodes: [
-                    { name: 'nazha-us', host: 'lavalink.nazha.online', port: 443, password: 'nazhafreelava', secure: true },
-                    { name: 'nazha-sg', host: 'sg-1.nazha.online', port: 443, password: 'https://discord.gg/XeSCnk57ZF', secure: true },
-                    { name: 'huntolls', host: 'lavalink-v4.huntolls-bot.xyz', port: 443, password: 'youshallnotpass', secure: true },
-                    { name: 'jirayu', host: 'lavalink.jirayu.net', port: 13592, password: 'youshallnotpass', secure: false },
-                    { name: 'jompo', host: 'lavalink.jompo.cloud', port: 2333, password: 'jompo', secure: false }
-                ]
+                host: EnvironmentVariableProcessor.LAVALINK_HOST ||  paloma.hidencloud.com 
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 24672      
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||  https://discord.gg/J3kdqKcKC5 
+                secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
             },
             
             /**
@@ -58,7 +42,7 @@ class EnterpriseConfigurationManager {
              */
             bot: {
                 prefix: EnvironmentVariableProcessor.BOT_PREFIX || "!",  // 👈 prefix (!, ?, etc)
-                ownerIds: ["1237071468035051631","1542574185535115376"],      // 👈 ADD YOUR DISCORD ID HERE
+                ownerIds: ["1237071468035051631"],      // 👈 ADD YOUR DISCORD ID HERE
                 embedColor: 0x00AE86,               // 👈 Bot embed color (hex)
                 supportServer: "https://discord.gg/BTq5tTpTBD",    // 👈 Your support server link
                 defaultStatus: "🎵 Ready for music!"         // 👈 Bot status message
@@ -112,16 +96,11 @@ module.exports = primaryApplicationConfiguration;
  * TOKEN=your_bot_token_here
  * MONGODB_URI=your_mongodb_uri_here
  * BOT_PREFIX=!
- * LAVALINK_HOST=your_lavalink_host
- * LAVALINK_PORT=2333
- * LAVALINK_PASSWORD=your_lavalink_password
- * LAVALINK_SECURE=false
  * 
  * ⚠️ SECURITY WARNING:
  * Never share your bot token or database URI publicly!
  * Use environment variables in production!
  */
-
 
 
 
