@@ -30,9 +30,9 @@ class EnterpriseConfigurationManager {
              * Configure your Lavalink server for audio processing
              */
             lavalink: {
-                host: EnvironmentVariableProcessor.LAVALINK_HOST ||  "nokia.vexanode.gg",
-                port: EnvironmentVariableProcessor.LAVALINK_PORT || 19133,    
-                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||  "vexanode.cloud",
+                host: EnvironmentVariableProcessor.LAVALINK_HOST ||  "free-lava.heavencloud.in",
+                port: EnvironmentVariableProcessor.LAVALINK_PORT || 4000,    
+                password: EnvironmentVariableProcessor.LAVALINK_PASSWORD ||   "heavencloud.in",
                 secure: EnvironmentVariableProcessor.LAVALINK_SECURE === 'false' || true
             },
             
