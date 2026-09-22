@@ -1,0 +1,20 @@
+attached full-fix.txt is the git patch (non-empty). Save it as full-fix.patch in the workspace.
+
+DO NOT switch to main. DO NOT push origin main.
+Stay on arena/01a0c99d-bot-minej.
+
+Steps:
+1. Copy attachment to full-fix.patch. If size is 0 bytes, STOP and tell me.
+2. git apply --3way full-fix.patch
+   If conflicts, keep the patch/incoming version of each file.
+3. Verify ALL must pass:
+   - grep -c "Initial RPC" events/ready.js   → 1
+   - ls commands/slash/nowplaying.js commands/slash/seek.js commands/slash/247.js commands/slash/status.js
+   - grep -c "heavencloud-sg" config.js      → 1
+4. git add -A
+   git commit -m "Full fix: all features + RPC + 10 Lavalink nodes"
+5. git push origin HEAD
+6. gh pr create --base main --title "Full fix: RPC, new commands, Lavalink nodes" --body "Adds rotating RPC, per-guild slash commands, nowplaying/seek/247/status, 10 Lavalink nodes."
+7. Reply with exactly:
+   PR_URL: <url>
+   COMMIT: <hash>
