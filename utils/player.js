@@ -1,4 +1,5 @@
 const CentralEmbedHandler = require('./centralEmbed');
+const trackHistory = require('./trackHistory');
 
 class PlayerHandler {
     constructor(client) {
@@ -205,6 +206,8 @@ class PlayerHandler {
             try {
                 const trackTitle = track?.info?.title || 'Unknown Track';
                 console.log(`🎵 Started playing: ${trackTitle} in ${player.guildId}`);
+
+                trackHistory.push(player.guildId, track);
                 
                 if (this.client.statusManager) {
                     await this.client.statusManager.onTrackStart(player.guildId);
@@ -290,6 +293,8 @@ class PlayerHandler {
         this.client.riffy.on('playerDisconnect', async (player) => {
             try {
                 console.log(`🎵 Player destroyed for guild ${player.guildId}`);
+
+                trackHistory.clear(player.guildId);
                 
                 if (this.client.statusManager) {
                     await this.client.statusManager.onPlayerDisconnect(player.guildId);
