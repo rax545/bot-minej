@@ -43,17 +43,17 @@ class EnterpriseConfigurationManager {
                  * These are free public nodes and may go down anytime.
                  * For stable music, host your own Lavalink and set LAVALINK_* in .env.
                  */
-                               publicFallbackNodes: [
+                                      publicFallbackNodes: [
+                    { name: 'serenetia-80', host: 'lavalinkv4.serenetia.com', port: 80, password: 'https://seretia.link/discord', secure: false },
                     { name: 'serenetia-v4', host: 'lavalinkv4.serenetia.com', port: 443, password: 'https://seretia.link/discord', secure: true },
-                    { name: 'serenetia-v4-alt', host: 'lavalinkv4.serenetia.com', port: 443, password: 'https://dsc.gg/ajidevserver', secure: true },
+                    { name: 'serenetia-alt', host: 'lavalinkv4.serenetia.com', port: 443, password: 'https://dsc.gg/ajidevserver', secure: true },
                     { name: 'jirayu-443', host: 'lavalink.jirayu.net', port: 443, password: 'youshallnotpass', secure: true },
                     { name: 'jirayu-13592', host: 'lavalink.jirayu.net', port: 13592, password: 'youshallnotpass', secure: false },
                     { name: 'triniumhost-v4', host: 'lavalink-v4.triniumhost.com', port: 443, password: 'free', secure: true },
                     { name: 'triniumhost-ssl', host: 'lavalink-v4.triniumhost.indevs.in', port: 443, password: 'free', secure: true },
-                    { name: 'nazha-us', host: 'lavalink.nazha.online', port: 443, password: 'nazhafreelava', secure: true },
+                    { name: 'triniumhost-plain', host: 'lavalink.triniumhost.indevs.in', port: 4333, password: 'free', secure: false },
                     { name: 'heavencloud-sg', host: 'sg.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true },
-                    { name: 'heavencloud-us', host: 'us.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true },
-                    { name: 'heavencloud-eu', host: 'eu.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true }
+                    { name: 'heavencloud-us', host: 'us.lavalink.heavencloud.in', port: 443, password: 'heavencloud', secure: true }
                 ]
             },
 
