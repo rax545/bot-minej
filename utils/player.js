@@ -76,14 +76,48 @@ class PlayerHandler {
         }
     }
 
+    /**
+     * Resolve a query with multi-source fallback.
+     * URLs are resolved as-is; plain text queries are tried against
+     * ytsearch, then ytmsearch, then scsearch until one returns tracks.
+     */
+    async resolveWithFallback(query, requester) {
+        const isUrl = /^https?:\/\//i.test((query || '').trim());
+
+        if (isUrl) {
+            return this.client.riffy.resolve({ query, requester });
+        }
+
+        const sources = ['ytsearch', 'ytmsearch', 'scsearch'];
+        let lastResolve = null;
+
+        for (const source of sources) {
+            try {
+                const resolved = await this.client.riffy.resolve({
+                    query: `${source}:${query}`,
+                    requester
+                });
+                lastResolve = resolved;
+
+                if (resolved?.tracks?.length) {
+                    return resolved;
+                }
+            } catch (error) {
+                console.error(`Resolve failed on ${source}:`, error.message);
+                if (/no nodes are available/i.test(error.message || '')) {
+                    throw error;
+                }
+            }
+        }
+
+        return lastResolve || { loadType: 'empty', tracks: [], playlistInfo: null };
+    }
+
     async playSong(player, query, requester) {
         try {
             if (!player) return { type: 'error', code: 'lavalink_offline', message: PlayerHandler.getLavalinkOfflineMessage() };
 
-            const resolve = await this.client.riffy.resolve({ 
-                query: query, 
-                requester: requester 
-            });
+            const resolve = await this.resolveWithFallback(query, requester);
 
             const { loadType, tracks, playlistInfo } = resolve;
 
