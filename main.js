@@ -90,7 +90,7 @@ class DiscordClientRuntimeManager {
                         guildContextResolution.shard.send(audioPayloadTransmissionData);
                     }
                 },
-                defaultSearchPlatform: "ytmsearch",
+                defaultSearchPlatform: "ytsearch",
                 restVersion: "v4",
                 reconnectTries: 10,
                 reconnectTimeout: 10000,

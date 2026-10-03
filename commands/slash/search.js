@@ -61,7 +61,7 @@ module.exports = {
                 });
             }
 
-            const resolved = await client.riffy.resolve({ query, requester: interaction.user });
+            const resolved = await playerHandler.resolveWithFallback(query, interaction.user);
             const tracks = (resolved?.tracks || []).filter(track => track && track.info).slice(0, MAX_RESULTS);
 
             if (!tracks.length) {
