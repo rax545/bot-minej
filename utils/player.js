@@ -79,7 +79,8 @@ class PlayerHandler {
     /**
      * Resolve a query with multi-source fallback.
      * URLs are resolved as-is; plain text queries are tried against
-     * ytsearch, then ytmsearch, then scsearch until one returns tracks.
+     * ytsearch, ytmsearch, scsearch, spsearch, amsearch, then dzsearch
+     * until one returns tracks.
      */
     async resolveWithFallback(query, requester) {
         const isUrl = /^https?:\/\//i.test((query || '').trim());
@@ -88,7 +89,7 @@ class PlayerHandler {
             return this.client.riffy.resolve({ query, requester });
         }
 
-        const sources = ['ytsearch', 'ytmsearch', 'scsearch'];
+        const sources = ['ytsearch', 'ytmsearch', 'scsearch', 'spsearch', 'amsearch', 'dzsearch'];
         let lastResolve = null;
 
         for (const source of sources) {
@@ -119,9 +120,9 @@ class PlayerHandler {
 
             const resolve = await this.resolveWithFallback(query, requester);
 
-            const { loadType, tracks, playlistInfo } = resolve;
+            const { loadType, tracks = [], playlistInfo } = resolve || {};
 
-            if (loadType === 'playlist') {
+            if (loadType === 'playlist' && tracks.length > 0) {
                 for (const track of tracks) {
                     if (track && track.info) {
                         track.info.requester = requester;
@@ -139,10 +140,10 @@ class PlayerHandler {
                     name: playlistInfo?.name || 'Unknown Playlist'
                 };
 
-            } else if (loadType === 'search' || loadType === 'track') {
+            } else if (tracks.length > 0) {
                 const track = tracks[0];
                 if (!track || !track.info) {
-                    return { type: 'error', code: 'no_results', message: 'No results found' };
+                    return { type: 'error', code: 'load_failed', message: 'Failed to load track: resolved track is missing metadata' };
                 }
 
                 track.info.requester = requester;
