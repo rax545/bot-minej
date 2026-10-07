@@ -43,7 +43,7 @@ class EnterpriseConfigurationManager {
                  * These are free public nodes and may go down anytime.
                  * For stable music, host your own Lavalink and set LAVALINK_* in .env.
                  */
-                publicFallbackNodes: [
+                               publicFallbackNodes: [
                     { name: 'serenetia-80', host: 'lavalinkv4.serenetia.com', port: 80, password: 'https://seretia.link/discord', secure: false },
                     { name: 'serenetia-80-alt', host: 'lavalinkv4.serenetia.com', port: 80, password: 'https://dsc.gg/ajidevserver', secure: false },
                     { name: 'serenetia-v4', host: 'lavalinkv4.serenetia.com', port: 443, password: 'https://seretia.link/discord', secure: true },
